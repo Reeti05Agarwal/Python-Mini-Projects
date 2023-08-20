@@ -1,0 +1,112 @@
+import pyttsx3 #for speech synthesis
+import speech_recognition as sr
+import datetime #getting the current time
+import wikipedia #fetching info from wikipedia
+import webbrowser #for opening browser
+import os #for interacting with operating system
+import smtplib #for sending mails
+import pyjokes #fetching random jokes
+ 
+
+#initialising the speech synthesis and speech recognition
+Listener = sr.Recognizer()  #used to capture and recognize speech
+engine = pyttsx3.init("sapi5")  #Initializes the text-to-speech engine using the Microsoft Speech API ("sapi5"). 
+#This engine will be used to convert text to speech.
+voices = engine.getProperty("voices")  # Retrieves the list of available voices for the text-to-speech engine.
+engine.setProperty("voice", voices[0].id)  #Sets the voice property of the engine to use the first available voice in the list.
+
+def speak(audio):
+    #text to speech function
+    engine.say(audio)
+    engine.runAndWait()  #the speech is played by this function
+
+def wishMe():
+    #to greet the user based on the current time
+    hour = int(datetime.datetime.now().hour) #current hour
+    if 0 <= hour < 12:
+        speak("Good Morning")
+    elif 12 <= hour < 18:
+        speak("Good Afternoon")
+    else:
+        speak("Good Evening")
+    speak("Its Maria, What the fuck is the matter now reeto?")
+
+def takeCommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:  #used to manage the microphone as a source of audio input for speech recognition.
+        print("Listening...")
+        r.pause_threshold=1 #duration of silence (in seconds) that the function waits for after the user stops speaking before considering the input as complete.
+        audio = r.listen(source)
+
+        try:
+            print("Recording...")
+            query = r.recognize_google(audio, language="en-in")
+            print(f"User Said: {query}/n")
+        
+        except Exception as e:
+            print("Please repeate again bitch...")
+            return none
+        return query
+
+        '''
+        Inside the context block, you can perform operations related to capturing audio from the microphone. This includes recording voice input that will be used for speech recognition.
+        Once you exit the context (i.e., when the indented code block under the with statement ends), the microphone instance is automatically released and any resources associated with it are properly cleaned up. This is especially important to prevent memory leaks and ensure the microphone is available for other processes after your code finishes executing.
+        '''
+
+if __name__ == "__main__":
+    wishMe()
+    while True:
+        query = takeCommand().lower()
+
+        if query == "quite" or query == "exit":
+            break
+
+        if "wikipedia" in query:
+            speak("searching wikipedia..")
+            query = query.replace("wikipedia", "")
+            result = wikipedia.summary(query, sentences=3)
+            speak("According to wikipedia, which is by the way always correct beech...")
+            print(result)
+            print(result)
+            print(result)
+
+        elif "open youtube" in query:
+            webbrowser.open("www.youtube.com")
+
+        elif "open google" in query:
+            webbrowser.open("google.com")
+
+        elif "open spotify" in query:
+            webbrowser.open("www.spotify.com")
+
+        elif "open stack overflow" in query:
+            webbrowser.open("www.stackoverflow.com") 
+
+        elif "play music" in query:
+            music_dir = "E:\\Audios"
+            songs = os.listdir(music_dir)
+            print(songs)
+            os.startfile(os.path.join(music_dir, songs[0])) 
+
+        elif "the time" in query:
+            strtime = datetime.datetime.now().strftime("%H, %M, %S")
+            speak(f'beech, the time is {strtime}')
+
+        elif "open code" in query:
+            code_path = "C:\\Users\\Reeti\\OneDrive\\Desktop\\Code\\Visual Studio Code.lnk"
+            os.startfile(code_path)
+
+        elif "are you single" in query:
+            speak("i am in relationship with you beech")
+
+        elif "joke" in query:
+            speak(pyjokes.get_joke())
+
+        elif "bank account" in query:
+            speak("yes, sell your one of the kidney, arms, eyes any other body parts. In no time, you will be a billionaire")
+
+        elif "How to pass EGL" in query:
+            speak("Get paralysided. Sir or maam will give you marks cause they will feel pity for you")
+        
+else:
+    speak("Repeate the command again beech")
